@@ -31,7 +31,7 @@ const question = {
 };
 
 console.log(question.prompt);
-console.log(question.answers['1']);
+console.log(question.answers['one']);
 
 // when a client connects listen for messages and relay them to all the conected clients
 io.on( 'connection', ( client ) => {
@@ -54,6 +54,15 @@ io.on( 'connection', ( client ) => {
                 //                const question = "this is a question";
                   // broadcast the message to all connected clients
                 io.emit('sendNewQuestion', question);
+        });
+
+        client.on('sendAnswer', (answer) => {
+          console.log('received answer of: ', answer);
+          io.emit('sendPlayerAnswer', answer);
+        });
+
+        client.on('saveQuestions', (questionsToBeSaved) => {
+          console.log('questions to be saved to database: ',questionsToBeSaved);
         });
 });
 

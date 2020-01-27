@@ -1,8 +1,12 @@
 import {Component} from 'react';
+import OpenSocket from 'socket.io-client';
+
+const socket = OpenSocket('localhost:8000');
 
 class CreatePage extends Component {
         state =
                 {
+                        title: '',
                         prompt: '',
                         firstQ: '',
                         secondQ: '',
@@ -19,6 +23,7 @@ class CreatePage extends Component {
                 event.preventDefault();
                 const questionArray = this.state.questions;
                 const newQuestion = {
+                        index: this.state.questionsCounter,
                         prompt: this.state.prompt,
                         Q1:this.state.firstQ,
                         Q2:this.state.secondQ,
@@ -28,22 +33,24 @@ class CreatePage extends Component {
                 }
 
                 questionArray.push(newQuestion);
-                this.setState({questions:questionArray,displayQs: true});
+                var counter = this.state.questionsCounter + 1;
+                this.setState({questions:questionArray,displayQs: true,questionsCounter:counter});
 
                 console.log("new questions array: ",questionArray);
-                
-               
+
+
         };
 
 
         displayQuestions(){
                 const questionArray = this.state.questions;
-                
+
                 console.log("from display question: ", questionArray);
 
                 const questionDisplay = questionArray.map((item,index) => {
                         return (
                                 <ul>
+                                        <li key={`c${index}`}>Number: {item.index}</li>
                                         <li key={`p${index}`}>Prompt: {item.prompt}</li>
                                         <li key={`1${index}`}>Q1 {item.Q1}</li>
                                         <li key={`2${index}`}>Q2 {item.Q2}</li>
@@ -54,7 +61,7 @@ class CreatePage extends Component {
                         );
                 });
 
-                
+
                 return(
                         <div>
                                 {questionDisplay}
@@ -64,15 +71,18 @@ class CreatePage extends Component {
 
         saveQuestions = (event) => {
                 event.preventDefault();
-                const questionsToBeSaved = this.state.questions;
+                const questionsToBeSaved = {title: this.state.title, questions: this.state.questions};
                 console.log('Questions to be saved: ', questionsToBeSaved);
+                socket.emit('saveQuestions', questionsToBeSaved);
         }
-        
+
         render(){
                 return(
                         <div>
                                 <h1>Karahoot!</h1>
                                 <form action="submit" onSubmit={this.addQuestion}>
+                                        <h4>Title: </h4>
+                                        <input type="text" onChange={event => this.setState({title: event.target.value})}/><br/>
                                         <h4>Question Prompt: </h4>
                                         <input type="text" onChange={event => this.setState({prompt: event.target.value})}/><br/>
                                         <h4>Question 1: </h4>

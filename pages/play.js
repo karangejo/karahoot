@@ -6,35 +6,44 @@ const socket = OpenSocket('localhost:8000');
 class PlayPage extends Component {
 
         state = {
-                currentQuestion: ''
+                currentQuestion: '',
+                answer: ''
         }
 
         componentDidMount(){
                 socket.on('sendNewQuestion',(question) => {
                         console.log(question);
-                        this.setState({currentQuestion:question});
-                }); 
+                        this.setState({currentQuestion:question,answer:question.correct});
+
+                });
         };
-        
+
+        answerQuestion(answer){
+          console.log(answer);
+          if(answer === this.state.answer){
+            console.log('you got the right answer!');
+          }
+          socket.emit('sendAnswer', answer);
+        };
+
         displayQuestion(){
-                
+
                 const question = this.state.currentQuestion;
                 const prompt = question.prompt;
-                console.log(question.answers.one);
                 const question1 = question.answers.one;
                 const question2 = question.answers.two;
                 const question3 = question.answers.three;
                 const question4 = question.answers.four;
-                
+
                 return(
                         <div>
                                 <h1>{prompt}</h1>
                                  <ul>
-                                        <button>{question1}</button>
-                                        <button>{question2}</button>
-                                        <button>{question3}</button>
-                                        <button>{question4}</button>
-                                </ul> 
+                                        <button onClick = {() => this.answerQuestion('one')}>{question1}</button>
+                                        <button onClick = {() => this.answerQuestion('two')}>{question2}</button>
+                                        <button onClick = {() => this.answerQuestion('three')}>{question3}</button>
+                                        <button onClick = {() => this.answerQuestion('four')}>{question4}</button>
+                                </ul>
                         </div>
                 );
         }
