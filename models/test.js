@@ -36,6 +36,10 @@ const testSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  owner: {
+    type: String,
+    required: true
+  },
   numberOfQuestions: {
     type: String,
     required: true
@@ -46,11 +50,11 @@ const testSchema = new mongoose.Schema({
   }
 })
 
-//const myDB = mongoose.connection.useDb('myDB');
+const testDB = mongoose.connection.useDb('tests');
 
-//const testInfo = myDB.model('test', testSchema);
+const testInfo = testDB.model('test', testSchema);
 
-//export default testInfo;
+module.exports = testInfo;
 
 
-module.exports = mongoose.model('test', testSchema)
+//module.exports = mongoose.model('test', testSchema)

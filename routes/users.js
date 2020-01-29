@@ -1,36 +1,32 @@
 const express = require('express')
 const router = express.Router()
-const Subscriber = require('../models/subscriber')
+const User = require('../models/user')
 
-// Getting all
+// example request http://localhost:3000/users/?email=myEmail
 router.get('/', async (req, res) => {
-  try {
-    const subscribers = await Subscriber.find()
-    res.json(subscribers)
-  } catch (err) {
+  try{
+    const user = await User.find({email: req.query.email})
+    res.status(200).json(user)
+  }catch(err){
     res.status(500).json({ message: err.message })
   }
 })
 
-// Getting One
-router.get('/:id', getSubscriber, (req, res) => {
-  res.json(res.subscriber)
-})
-
 // Creating one
 router.post('/', async (req, res) => {
-  const subscriber = new Subscriber({
-    name: req.body.name,
-    subscribedToChannel: req.body.subscribedToChannel
+  console.log(req)
+  const user = new User({
+    name: req.query.name,
+    email: req.query.email
   })
   try {
-    const newSubscriber = await subscriber.save()
-    res.status(201).json(newSubscriber)
+    const newUser = await user.save()
+    res.status(201).json(newUser)
   } catch (err) {
     res.status(400).json({ message: err.message })
   }
 })
-
+/*
 // Updating One
 router.patch('/:id', getSubscriber, async (req, res) => {
   if (req.body.name != null) {
@@ -57,19 +53,19 @@ router.delete('/:id', getSubscriber, async (req, res) => {
   }
 })
 
-async function getSubscriber(req, res, next) {
-  let subscriber
+async function getUser(req, res, next) {
+  let user
   try {
-    subscriber = await Subscriber.findById(req.params.id)
-    if (subscriber == null) {
-      return res.status(404).json({ message: 'Cannot find subscriber' })
+    user = await User.find({email: req.query.email})
+    if (user == null) {
+      return res.status(404).json({ message: 'Cannot find user' })
     }
   } catch (err) {
     return res.status(500).json({ message: err.message })
   }
 
-  res.subscriber = subscriber
+  res.user = user
   next()
 }
-
+*/
 module.exports = router
