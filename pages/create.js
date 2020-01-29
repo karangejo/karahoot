@@ -1,11 +1,13 @@
 import {Component} from 'react';
 import OpenSocket from 'socket.io-client';
+import axios from 'axios';
 
 const socket = OpenSocket('localhost:8000');
 
 class CreatePage extends Component {
         state =
                 {
+                        owner: 'me',
                         title: '',
                         prompt: '',
                         firstQ: '',
@@ -71,7 +73,19 @@ class CreatePage extends Component {
 
         saveQuestions = (event) => {
                 event.preventDefault();
-                const questionsToBeSaved = {title: this.state.title, questions: this.state.questions};
+                const questionsToBeSaved = {title: this.state.title,
+                                            owner: this.state.owner,
+                                            numberOfQuestions: this.state.questionsCounter,
+                                            questions: this.state.questions};
+                console.log(questionsToBeSaved);
+                axios.post('http://localhost:3001/tests',questionsToBeSaved)
+                          .then((res) => {
+                            console.log(res);
+                          })
+                          .catch((err) => {
+                            console.log(err);
+                          });
+
                 console.log('Questions to be saved: ', questionsToBeSaved);
                 socket.emit('saveQuestions', questionsToBeSaved);
         }

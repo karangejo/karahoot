@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const Test = require('../models/test')
 
+
 // Getting all
 router.get('/', async (req, res) => {
   try {
@@ -13,12 +14,13 @@ router.get('/', async (req, res) => {
 })
 
 // Getting One
-router.get('/:id', getTest, (req, res) => {
+router.get('/:id', getTest, (req, res, next) => {
   res.json(res.test)
 })
 
 // Creating one
-router.post('/', async (req, res) => {
+router.post('/', async function(req, res){
+  console.log(req);
   const testToSave = new Test({
     title: req.body.title,
     owner: req.body.owner,
