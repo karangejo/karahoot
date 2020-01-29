@@ -6,6 +6,9 @@ const socket = OpenSocket('localhost:8000');
 class PlayPage extends Component {
 
         state = {
+                name: '',
+                score: 0,
+                connection: '',
                 currentQuestion: '',
                 answer: ''
         }
@@ -48,6 +51,7 @@ class PlayPage extends Component {
                 );
         }
 
+        // first ask for a name and a server to connect to and then start showing questions and scores
         render(){
                 return(
                         <div>
