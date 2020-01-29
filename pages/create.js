@@ -21,25 +21,43 @@ class CreatePage extends Component {
                         displayQs: false
                 };
 
+        validateQuestion = () => {
+          if(!this.state.index || !this.state.prompt || ! this.state.firstQ || !this.state.secondQ || !this.state.thirdQ || !this.state.fourthQ|| ! this.state.correctAnswer){
+              return false;
+            }
+          return true;
+        }
+
+        validateHasAnswer = () => {
+          const answer = this.state.correctAnswer
+          if((answer === this.state.firstQ) || (answer === this.state.secondQ) || (answer === this.state.thirdQ) || ( answer === this.state.fourth)){
+            return true;
+          }
+          return false;
+        }
+
         addQuestion = (event) => {
                 event.preventDefault();
-                const questionArray = this.state.questions;
-                const newQuestion = {
-                        index: this.state.questionsCounter,
-                        prompt: this.state.prompt,
-                        Q1:this.state.firstQ,
-                        Q2:this.state.secondQ,
-                        Q3:this.state.thirdQ,
-                        Q4:this.state.fourthQ,
-                        correct:this.state.correctAnswer,
+                if(validateQuestion() && validateHasAnswer()){
+                  const questionArray = this.state.questions;
+                  const newQuestion = {
+                          index: this.state.questionsCounter,
+                          prompt: this.state.prompt,
+                          Q1:this.state.firstQ,
+                          Q2:this.state.secondQ,
+                          Q3:this.state.thirdQ,
+                          Q4:this.state.fourthQ,
+                          correct:this.state.correctAnswer,
+                  }
+
+                  questionArray.push(newQuestion);
+                  var counter = this.state.questionsCounter + 1;
+                  this.setState({questions:questionArray,displayQs: true,questionsCounter:counter});
+
+                  console.log("new questions array: ",questionArray);
+                } else {
+                  console.log("Could not add question, missing some fields or correct answer does not match");
                 }
-
-                questionArray.push(newQuestion);
-                var counter = this.state.questionsCounter + 1;
-                this.setState({questions:questionArray,displayQs: true,questionsCounter:counter});
-
-                console.log("new questions array: ",questionArray);
-
 
         };
 
@@ -71,23 +89,36 @@ class CreatePage extends Component {
                 );
         }
 
+        validateBeforeSave = () => {
+          if(!this.state.title || !this.state.owner || !this.state.questionsCounter|| !this.state.questions){
+            return false;
+          }
+
+          return true;
+        }
+
         saveQuestions = (event) => {
                 event.preventDefault();
-                const questionsToBeSaved = {title: this.state.title,
-                                            owner: this.state.owner,
-                                            numberOfQuestions: this.state.questionsCounter,
-                                            questions: this.state.questions};
-                console.log(questionsToBeSaved);
-                axios.post('http://localhost:3001/tests',questionsToBeSaved)
-                          .then((res) => {
-                            console.log(res);
-                          })
-                          .catch((err) => {
-                            console.log(err);
-                          });
+                if(validateBeforeSave()){
+                  const questionsToBeSaved = {title: this.state.title,
+                                              owner: this.state.owner,
+                                              numberOfQuestions: this.state.questionsCounter,
+                                              questions: this.state.questions};
+                  console.log(questionsToBeSaved);
+                  axios.post('http://localhost:3001/tests',questionsToBeSaved)
+                            .then((res) => {
+                              console.log(res);
+                            })
+                            .catch((err) => {
+                              console.log(err);
+                            });
 
-                console.log('Questions to be saved: ', questionsToBeSaved);
-                socket.emit('saveQuestions', questionsToBeSaved);
+                  console.log('Questions to be saved: ', questionsToBeSaved);
+                  socket.emit('saveQuestions', questionsToBeSaved);
+                } else {
+                  console.log("Unable to save must include title owner number of questions and the actual questions");
+                }
+
         }
 
         render(){
