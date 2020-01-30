@@ -22,7 +22,7 @@ class CreatePage extends Component {
                 };
 
         validateQuestion = () => {
-          if(!this.state.index || !this.state.prompt || ! this.state.firstQ || !this.state.secondQ || !this.state.thirdQ || !this.state.fourthQ|| ! this.state.correctAnswer){
+          if((this.state.questionsCounter == 0) || !this.state.prompt || ! this.state.firstQ || !this.state.secondQ || !this.state.thirdQ || !this.state.fourthQ|| ! this.state.correctAnswer){
               return false;
             }
           return true;
